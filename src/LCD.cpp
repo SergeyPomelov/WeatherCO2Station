@@ -36,13 +36,13 @@ void lcdUpdateData()
   backlit = (backlit < 250U) ? 0U : (int)backlit;
 
   lcd.setCursor(0U, 0U);
-  lcd.print(String(insideTemp, 2U) + "C " + String(insideHum, 0U) + "% " + String(insidePres) + "hPa");
+  lcd.print(String(insideTemp, 2U) + "C " + String(outsideTemp, 2U) + "C ");
   lcd.setCursor(0U, 1U);
-  lcd.print("CO2 " + String(co2Value) + "ppm " + (int)lux.getAverage() + "Lux  ");
+  lcd.print(String(timeStr) + " " + String(insideHum, 0U) + "% " + String(insidePres) + "hPa ");
   lcd.setCursor(0U, 2U);
-  lcd.print("TVOC " + String((uint16_t)tvocValue.getMedian()) + "ppb     ");
+  lcd.print("CO2 " + String(co2Value) + "ppm " + (int)lux.getAverage() + "Lux  ");
   lcd.setCursor(0U, 3U);
-  lcd.print("                   ");
+  lcd.print("TVOC " + String((uint16_t)tvocValue.getMedian()) + "ppb PM " + String(PM10Reading) + "  ");
  
   analogWrite(BACKLIGHT_PIN, backlit);
 }

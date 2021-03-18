@@ -10,6 +10,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <Scanner.h>
+#include <Ntp.h>
 #include <Wire.h>
 #include <Ticker.h>
 
@@ -25,8 +26,8 @@ void update()
   Co2read();
   lcdUpdateData();
 
-  Serial.print(String("Temp ") + insideTemp + " Hum " + insideHum + " Press " + insidePres);
-  Serial.print(String(" CO2 ") + co2Value + " TVOC " + TVOCReading + " PM10 " + PM10Reading + " PM25 " + PM25Reading);
+  Serial.print(timeStr + String(" Temp ") + insideTemp + String(" Out Temp ") + outsideTemp  + " Hum " + insideHum + " Press " + insidePres);
+  Serial.print(String(" CO2 ") + co2Value + " TVOC " + TVOCReading + " PM10 " + PM10Reading);
   Serial.println(String(" Backlit ") + backlit + " Lux " + luxReading);
   ESP.wdtFeed();
 }
@@ -43,22 +44,24 @@ void initDevice(const String deviceName, const uint8_t displayLine, boolean (*in
   }
   else
   {
-    lcdPrint(F("ERROR"));
-    Serial.println(F("ERROR"));
+    lcdPrint(F("ERR"));
+    Serial.println(F("ERR"));
     status = false;
   }
 }
 
-Ticker scannerTicker(scanner, 1000, 0, MILLIS);
-Ticker updateTicker(update, 1000, 0, MILLIS);
+Ticker scannerTicker(scanner, INTERVAL_UPDATE_MS, 0, MILLIS);
+Ticker updateTicker(update, INTERVAL_UPDATE_MS, 0, MILLIS);
+Ticker ntpTiker(updateTime, INTERVAL_UPDATE_MS, 0, MILLIS);
 Ticker sendDataTicker(sendDataDomoticz, INTERVAL_DATA_SEND_MS, 0, MILLIS);
-Ticker PMTicker(PMread, 10000, 0, MILLIS);
+Ticker updateTempTicker(updateTemp, INTERVAL_DATA_GET_MS, 0, MILLIS);
+Ticker PMTicker(PMread, INTERVAL_PM_READ_MS, 0, MILLIS);
 
 void setup()
 {
 
-  Serial.begin(9600U);
-  Serial.setTimeout(2000);
+  Serial.begin(76800U);
+  Serial.setTimeout(2000U);
   Serial.setDebugOutput(true);
   digitalWrite(LED_BUILTIN, HIGH);
   while (!Serial)
@@ -70,17 +73,20 @@ void setup()
   Serial.print("Startup reason: ");
   Serial.println(ESP.getResetReason());
   
-  lcdInit();
   scannerTicker.start();
   updateTicker.start();
+  ntpTiker.start();
   sendDataTicker.start();
   PMTicker.start();
+  updateTempTicker.start();
+
+  lcdInit();
   initDevice(String("S8"), 0U, Co2init);
   initDevice(String("BME280"), 1U, BME280init);
   initDevice(String("CCS811"), 2U, TVOCinit);
-  initDevice(String("PM"), 3U, PMinit);
+  initDevice(String("S8 OK, PM"), 0U, PMinit);
   initDevice(String("WiFi"), 3U, WiFiconnect);
- 
+  initDevice(String("BME OK, NTP"), 1U, ntpInit);
 
   if (status)
   {
@@ -89,20 +95,24 @@ void setup()
   else
   {
     Serial.println(F("Self-check failed"));
-    //while (true)
-    //  delay(100);
+    while (true)
+      delay(100);
   }
   tvocValue.add(0.0F);
   ESP.wdtDisable();
   ESP.wdtEnable(60 * WDTO_1S);
+  updateTemp();
+
   lcdClear();
   digitalWrite(LED_BUILTIN, LOW);
 }
 
 void loop()
 {
-  scannerTicker.update();
+  // scannerTicker.update();
   updateTicker.update();
   sendDataTicker.update();
+  updateTempTicker.update();
+  ntpTiker.update();
   PMTicker.update();
 }

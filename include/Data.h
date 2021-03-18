@@ -3,6 +3,7 @@
 extern float outsideTemp;
 extern float insideTemp;
 extern float insideHum;
+extern String timeStr;
 extern uint16_t insidePres;
 extern RunningMedian lux;
 extern RunningMedian lux30;

@@ -1,0 +1,3 @@
+
+boolean ntpInit();
+String updateTime();

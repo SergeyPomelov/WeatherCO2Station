@@ -8,7 +8,7 @@ float valDUSTPM10 = 0.0;
 uint32_t duration;
 uint32_t starttime;
 uint32_t endtime;
-uint32_t sampletime_ms = 1000;
+uint32_t sampletime_ms = 3000;
 uint32_t lowpulseoccupancy = 0;
 float ratio = 0;
 long concentrationPM25 = 0;
@@ -34,7 +34,6 @@ long getPM(int DUST_SENSOR_DIGITAL_PIN)
     {
       ratio = lowpulseoccupancy / (sampletime_ms * 10.0);
       long concentration = 1.1 * pow(ratio, 3) - 3.8 * pow(ratio, 2) + 520 * ratio + 0.62;
-      Serial.println(ratio);
       lowpulseoccupancy = 0;
       return (concentration);
     }
@@ -43,27 +42,15 @@ long getPM(int DUST_SENSOR_DIGITAL_PIN)
 
 void PMread()
 {
-  //get PM 2.5 density of particles over 2.5 µm.
-  concentrationPM25 = (long)getPM(PM25_PIN);
-  Serial.print("PM25: ");
-  Serial.println(concentrationPM25);
-
-  if ((concentrationPM25 != PM25Reading) && (concentrationPM25 > 0))
-  {
-    PM25Reading = ceil(concentrationPM25);
-  }
-
   //get PM 1.0 - density of particles over 1 µm.
   concentrationPM10 = getPM(PM10_PIN);
-  Serial.print("PM10: ");
-  Serial.println(concentrationPM10);
 
   //ppmv=mg/m3 * (0.08205*Tmp)/Molecular_mass
   //0.08205   = Universal gas constant in atm·m3/(kmol·K)
   //external temperature, if you can replace this with a DHT11 or better
-  long ppmv = (concentrationPM10 * 0.0283168 / 100 / 1000) * (0.08205 * insideTemp) / 0.01;
+  // long ppmv = (concentrationPM10 * 0.0283168 / 100 / 1000) * (0.08205 * insideTemp) / 0.01;
   if ((ceil(concentrationPM10) != PM10Reading) && ((long)concentrationPM10 > 0))
   {
-    PM10Reading = ceil(ppmv);
+    PM10Reading = ceil(concentrationPM10 / 100.0);
   }
 }

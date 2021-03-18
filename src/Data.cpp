@@ -3,6 +3,7 @@
 
 float outsideTemp;
 float insideTemp;
+String timeStr;
 float insideHum;
 uint16_t insidePres;
 RunningMedian lux30(30U);

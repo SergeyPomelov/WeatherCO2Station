@@ -7,12 +7,6 @@
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "time.google.com", UTC_OFFSET_SEC, 60000);
 
-boolean ntpInit()
-{
-  timeClient.begin();
-  return timeClient.forceUpdate();
-}
-
 String getFormattedTime()
 {
   unsigned long hours = timeClient.getHours();
@@ -22,6 +16,14 @@ String getFormattedTime()
   String minuteStr = minutes < 10 ? "0" + String(minutes) : String(minutes);
 
   return hoursStr + ":" + minuteStr;
+}
+
+boolean ntpInit()
+{
+  timeClient.begin();
+  boolean result = timeClient.forceUpdate();
+  timeStr = getFormattedTime();
+  return result;
 }
 
 String updateTime()

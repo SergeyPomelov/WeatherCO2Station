@@ -19,18 +19,28 @@ boolean status = true;
 void update()
 {
   const int luxReading = analogRead(LUX_PIN);
-  const int TVOCReading = TVOCread();
-  lux.add((float)luxReading);
-  lux30.add((float)luxReading);
+  //const int TVOCReading = TVOCread();
+  const int TVOCReading = 0;
+  lux.add((float)luxReading * 0.64453125);
+  lux30.add((float)luxReading * 0.64453125);
   BME280read();
+  // Serial.println(String("Co2"));
   Co2read();
+  // Serial.println(String("lcdUpdate"));
   lcdUpdateData();
 
   Serial.print(timeStr + String(" Temp ") + insideTemp + String(" Out Temp ") + outsideTemp  + " Hum " + insideHum + " Press " + insidePres);
-  Serial.print(String(" CO2 ") + co2Value + " TVOC " + TVOCReading + " PM10 " + PM10Reading);
+  Serial.print(String(" CO2 ") + co2Value + " TVOC " + TVOCReading);
   Serial.println(String(" Backlit ") + backlit + " Lux " + luxReading);
   ESP.wdtFeed();
 }
+
+Ticker scannerTicker(scanner, INTERVAL_UPDATE_MS, 0, MILLIS);
+Ticker updateTicker(update, INTERVAL_UPDATE_MS, 0, MILLIS);
+Ticker ntpTiker(updateTime, INTERVAL_UPDATE_MS, 0, MILLIS);
+Ticker sendDataTicker(sendDataDomoticz, INTERVAL_DATA_SEND_MS, 0, MILLIS);
+Ticker updateTempTicker(updateTemp, INTERVAL_DATA_GET_MS, 0, MILLIS);
+Ticker PMTicker(PMread, INTERVAL_PM_READ_MS, 0, MILLIS);
 
 void initDevice(const String deviceName, const uint8_t displayLine, boolean (*init)())
 {
@@ -49,13 +59,6 @@ void initDevice(const String deviceName, const uint8_t displayLine, boolean (*in
     status = false;
   }
 }
-
-Ticker scannerTicker(scanner, INTERVAL_UPDATE_MS, 0, MILLIS);
-Ticker updateTicker(update, INTERVAL_UPDATE_MS, 0, MILLIS);
-Ticker ntpTiker(updateTime, INTERVAL_UPDATE_MS, 0, MILLIS);
-Ticker sendDataTicker(sendDataDomoticz, INTERVAL_DATA_SEND_MS, 0, MILLIS);
-Ticker updateTempTicker(updateTemp, INTERVAL_DATA_GET_MS, 0, MILLIS);
-Ticker PMTicker(PMread, INTERVAL_PM_READ_MS, 0, MILLIS);
 
 void setup()
 {
@@ -83,10 +86,10 @@ void setup()
   lcdInit();
   initDevice(String("S8"), 0U, Co2init);
   initDevice(String("BME280"), 1U, BME280init);
-  initDevice(String("CCS811"), 2U, TVOCinit);
-  initDevice(String("S8 OK, PM"), 0U, PMinit);
-  initDevice(String("WiFi"), 3U, WiFiconnect);
-  initDevice(String("BME OK, NTP"), 1U, ntpInit);
+  //initDevice(String("CCS811"), 2U, TVOCinit);
+  // initDevice(String("S8 OK, PM"), 0U, PMinit);
+  initDevice(String("WiFi"), 2U, WiFiconnect);
+  initDevice(String("NTP"), 3U, ntpInit);
 
   if (status)
   {
@@ -98,9 +101,11 @@ void setup()
     while (true)
       delay(100);
   }
-  tvocValue.add(0.0F);
+  
   ESP.wdtDisable();
   ESP.wdtEnable(60 * WDTO_1S);
+
+  tvocValue.add(0.0F);
   updateTemp();
 
   lcdClear();
@@ -114,5 +119,5 @@ void loop()
   sendDataTicker.update();
   updateTempTicker.update();
   ntpTiker.update();
-  PMTicker.update();
+  // PMTicker.update();
 }

@@ -113,7 +113,7 @@ void sendDataDomoticz()
   {
     Serial.print("Domoticz send begin...\n");
     updateDevice(187U, String(co2Value), false);
-    updateDevice(190U, String(PM10Reading), false);
+    // updateDevice(190U, String(PM10Reading), false);
     updateDevice(191U, String((uint16_t)tvocValue.getMedian()), true);
   }
 }

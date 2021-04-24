@@ -5,11 +5,6 @@
 
 CCS811 ccs(CCS811_ADDR);
 
-boolean TVOCinit()
-{
-  return ccs.begin();
-}
-
 void printSensorError()
 {
   uint8_t error = ccs.getErrorRegister();
@@ -35,6 +30,16 @@ void printSensorError()
       Serial.print("MsgInvalid");
     Serial.println();
   }
+}
+
+boolean TVOCinit()
+{
+  boolean result = ccs.begin();
+  if (ccs.checkForStatusError())
+  {
+    printSensorError();
+  }
+  return result;
 }
 
 int TVOCread()

@@ -2,7 +2,8 @@
 
 #define DEBUG           true
 #define DEBUG_NTPClient true
-#define DISPLAY_ADDR    0x27
+#define 
+DISPLAY_ADDR    0x27
 #define ADS1115_ADDR    0x48
 #define CCS811_ADDR     0x5A
 #define LUX_PIN         A0

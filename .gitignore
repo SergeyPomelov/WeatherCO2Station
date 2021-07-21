@@ -1,3 +1,4 @@
 .pio
 .vscode
 include/Secrets.h
+src/workspace.code-workspace

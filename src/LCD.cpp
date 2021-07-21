@@ -65,14 +65,14 @@ void print(const uint8_t row, const String str)
 
 void lcdUpdateData()
 {
-  backlit = (uint32_t)lux30.getAverage(30) * 8;
+  backlit = (uint32_t)lux30.getAverage(30) * 16;
   backlit = (backlit < 1023U) ? (int)backlit : 1023U;
   backlit = (backlit < 250U) ? 0U : (int)backlit;
 
-  print(0U, String(insideTemp, 2U) + "C " + String(outsideTemp, 1U) + "C " + (int)lux.getAverage() + "Lux");
-  print(1U, "RH " + String(insideHum, 0U) + "% " + String(insidePres) + "hPa");
-  print(2U, "CO2 " + String(co2Value) + "ppm");
-  print(3U, String(timeStr) + " " + "TVOC " + String((uint16_t)tvocValue.getMedian()));
+  print(0U, String(timeStr) + " " + String(insideTemp, 2U) + "C " + String((int)lux.getAverage()) + "Lux");
+  print(1U, "RH " + String(insideHum, 2U) + "% " + String(insidePres) + "hPa");
+  print(2U, "Outside: " + String(outsideTemp, 1U) + "C");
+  print(3U, "");
 
   analogWrite(BACKLIGHT_PIN, backlit);
 }

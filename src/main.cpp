@@ -19,14 +19,12 @@ boolean status = true;
 void update()
 {
   const int luxReading = analogRead(LUX_PIN);
-  //const int TVOCReading = TVOCread();
+  // const int TVOCReading = TVOCread();
   const int TVOCReading = 0;
   lux.add((float)luxReading * 0.64453125);
   lux30.add((float)luxReading * 0.64453125);
   BME280read();
-  // Serial.println(String("Co2"));
-  Co2read();
-  // Serial.println(String("lcdUpdate"));
+  // Co2read();
   lcdUpdateData();
 
   Serial.print(timeStr + String(" Temp ") + insideTemp + String(" Out Temp ") + outsideTemp  + " Hum " + insideHum + " Press " + insidePres);
@@ -84,12 +82,11 @@ void setup()
   updateTempTicker.start();
 
   lcdInit();
-  initDevice(String("S8"), 0U, Co2init);
+  // initDevice(String("S8"), 0U, Co2init);
   initDevice(String("BME280"), 1U, BME280init);
-  //initDevice(String("CCS811"), 2U, TVOCinit);
-  // initDevice(String("S8 OK, PM"), 0U, PMinit);
-  initDevice(String("WiFi"), 2U, WiFiconnect);
-  initDevice(String("NTP"), 3U, ntpInit);
+  // initDevice(String("CCS811"), 2U, TVOCinit);
+  initDevice(String("WiFi"), 3U, WiFiconnect);
+  initDevice(String("WiFi OK, NTP"), 3U, ntpInit);
 
   if (status)
   {
@@ -98,8 +95,8 @@ void setup()
   else
   {
     Serial.println(F("Self-check failed"));
-    while (true)
-      delay(100);
+     //while (true)
+      //delay(100);
   }
   
   ESP.wdtDisable();
@@ -114,10 +111,9 @@ void setup()
 
 void loop()
 {
-  // scannerTicker.update();
+  scannerTicker.update();
   updateTicker.update();
   sendDataTicker.update();
   updateTempTicker.update();
   ntpTiker.update();
-  // PMTicker.update();
 }

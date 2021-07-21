@@ -15,7 +15,7 @@ String getFormattedTime()
   unsigned long minutes = timeClient.getMinutes();
   String minuteStr = minutes < 10 ? "0" + String(minutes) : String(minutes);
 
-  return hoursStr + ":" + minuteStr;
+  return hoursStr + ((timeClient.getSeconds() % 2) ? ":" : " ") + minuteStr;
 }
 
 boolean ntpInit()
@@ -28,8 +28,6 @@ boolean ntpInit()
 
 String updateTime()
 {
-  // Serial.println(timeClient.update());
   timeStr = getFormattedTime();
-  // Serial.println(getFormattedTime());
   return timeStr;
 }

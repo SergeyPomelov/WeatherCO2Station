@@ -65,9 +65,11 @@ void print(const uint8_t row, const String str)
 
 void lcdUpdateData()
 {
-  backlit = (uint32_t)lux30.getAverage(30) * 16;
-  backlit = (backlit < 1023U) ? (int)backlit : 1023U;
-  backlit = (backlit < 250U) ? 0U : (int)backlit;
+  // backlit = (uint32_t)lux30.getAverage(30) * 16;
+  // backlit = (backlit < 1023U) ? (int)backlit : 1023U;
+  // backlit = (backlit < 250U) ? 0U : (int)backlit;
+
+  backlit = 1023;
 
   print(0U, String(timeStr) + " " + String(insideTemp, 2U) + "C " + String((int)lux.getAverage()) + "Lux");
   print(1U, "RH " + String(insideHum, 2U) + "% " + String(insidePres) + "hPa");

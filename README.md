@@ -1,6 +1,14 @@
 # Weather Station
 ![Weather](https://i.ibb.co/4W5jHH2/weather.jpg)
 
+![Repository Top Language](https://img.shields.io/github/languages/top/SergeyPomelov/WeatherCO2Station)
+![Languages](https://img.shields.io/github/languages/count/SergeyPomelov/WeatherCO2Station)
+![Github Repository Size](https://img.shields.io/github/repo-size/SergeyPomelov/WeatherCO2Station)
+![Github Open Issues](https://img.shields.io/github/issues/SergeyPomelov/WeatherCO2Station)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+SmartHomeBackEnd
+SoilSensor
 Arduino Based Online Weather Station's Firmware.
 
 ### Build
